@@ -159,9 +159,9 @@ On peut en ajouter autant qu'on veut en fonction de l'évolution des uses cases
 
 ---
 
-Architecture Event sourcing CQRS
+Architecture Event Sourcing / CQRS
 
-![Archi Axon](axon-architecture-overview.png) <!-- .element: style="max-width: 100%" -->
+<img class="plain" src="axon-architecture.png"/>
 
 ---
 # Mise en oeuvre
@@ -187,5 +187,69 @@ D'où l'intérêt d'utiliser un framework.
 ---
 # Axon framework
 
+* Abstrait la complexité technique.
+* Fournit un framework de test.
+* S'interface avec Spring. 
+
+---
+# Axon framework
+
 Démo
 
+---
+# Transactions 
+
+> A.C.I.D <br/><small>Atomicity, Consistency, Isolation, Durability</small>
+
+vs
+
+> B.A.S.E <br/><small>Basic Availability, Soft state, Eventual consistency</small>
+
+note: comment gérer les transactions avec de l'event sourcing ? notion de ACID et BASE
+acid: Atomicity, Consistency, Isolation, Durability
+base: Basic Availability, Soft state, Eventual consistency
+Grosso modo: on ne peut pas rollbacker une transaction BASE, il faut "compenser les modifications."
+
+---
+
+# Le pattern "SAGA"
+
+* since 1987
+* c'est une conversation entre plusieurs systèmes. 
+* lorsque les participants à la conversation sont d'accord, on commit la conversation
+* en cas de problème, on prend des actions de compensation
+* une transaction est identifiée comme un concept de premier niveau
+
+--- 
+
+## Exemple de Saga
+
+<img class="plain" src="sequence_virement-nominal.png"/>
+
+--- 
+
+## Compensation
+
+<img class="plain" src="sequence_virement-erreur_de_credit.png"/>
+
+--- 
+
+# Saga avec Axon
+
+Démo
+
+---
+
+# Conclusion
+
+Event sourcing ?
+
+* Si ce style d'architecture est vraiment pertinent: utiliser axon pour gagner du temps et éviter
+* Sinon, laisser tomber l'es. c'est pas si simple.
+* Pour régler certains problèmes: ne pas hésiter à utiliser des techniques classiques.
+* gestion de version: upcasting, rgpd ?
+
+note: 
+Exemple typique: on veut ajouter des utilisateurs avec une contrainte d'unicité sur l'adresse mail: dans
+ce cas, il faut utiliser une table classique avec une contrainte d'unicité et une consistence éventuelle classique (acid)
+Attention au versionning des events immutables alors que l'application évolue. 
